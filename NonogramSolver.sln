@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonogramSolver", "NonogramSolver\NonogramSolver.csproj", "{BDFB84D6-51B4-43AB-8B65-F2330E842845}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonogramConsole", "NonogramConsole\NonogramConsole.csproj", "{7CE9D5D3-CCF9-4928-8604-7B1E76E2E034}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDFB84D6-51B4-43AB-8B65-F2330E842845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDFB84D6-51B4-43AB-8B65-F2330E842845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDFB84D6-51B4-43AB-8B65-F2330E842845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDFB84D6-51B4-43AB-8B65-F2330E842845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CE9D5D3-CCF9-4928-8604-7B1E76E2E034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CE9D5D3-CCF9-4928-8604-7B1E76E2E034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CE9D5D3-CCF9-4928-8604-7B1E76E2E034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CE9D5D3-CCF9-4928-8604-7B1E76E2E034}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7559017D-BF70-414A-98BE-D0A7B9FAB919}
+	EndGlobalSection
+EndGlobal
