@@ -65,9 +65,52 @@ namespace NonogramSolver
                     if (c.Process()) hasChanges = true;
                 foreach (var r in potentialRows)
                     if (r.Process()) hasChanges = true;
+
+                if(!hasChanges && !IsSolved())
+                {
+                    foreach (var c in potentialColumns)
+                        if (c.BruteForce()) hasChanges = true;
+                    foreach (var r in potentialRows)
+                        if (r.BruteForce()) hasChanges = true;
+                }
             }
             while(hasChanges);
 
+        }
+
+        public bool IsSolved()
+        {
+            for(int ix = 0; ix < Width; ix++)
+            {
+                for(int iy = 0; iy < Height; iy++)
+                {
+                    if (this[ix, iy] == CellState.Empty)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        public override string ToString()
+        {
+            string ret = "";
+
+            for(int iy = 0; iy < Height; iy++)
+            {
+                for(int ix = 0; ix < Width; ix++)
+                {
+                    switch(_board[ix, iy])
+                    {
+                        case CellState.Empty: ret += " "; break;
+                        case CellState.Filled: ret += "#"; break;
+                        case CellState.Cross: ret += "X"; break;
+                    }
+                }
+                if(iy < Height - 1)
+                    ret += "\n";
+            }
+
+            return ret;
         }
 
         public enum CellState : byte

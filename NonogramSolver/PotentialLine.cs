@@ -19,10 +19,10 @@ namespace NonogramSolver
             _size = _isColumn ? board.Height : board.Width;
             _index = index;
 
-            _potentials = AddPosiblePositions();
+            _potentials = AddPossiblePositions();
         }
 
-        private List<List<Line>> AddPosiblePositions()
+        private List<List<Line>> AddPossiblePositions()
         {
             List<List<Line>> ret = new();
 
@@ -50,35 +50,38 @@ namespace NonogramSolver
             return ret;
         }
 
+        private Board.CellState GetCell(int i) => _isColumn ? _board[_index, i] : _board[i, _index];
+        private bool SetCell(int i, Board.CellState state)
+        {
+            if (_isColumn)
+            {
+                if (_board[_index, i] != state)
+                {
+                    _board[_index, i] = state;
+                    return true;
+                }
+            }
+            else
+            {
+                if (_board[i, _index] != state)
+                {
+                    _board[i, _index] = state;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         internal bool Process()
         {
             bool ret = false;
 
-            var getCell = (int i) => _isColumn ? _board[_index, i] : _board[i, _index];
-            var setCell = (int i, Board.CellState state) =>
-            {
-                if (_isColumn)
-                {
-                    if (_board[_index, i] != state)
-                    {
-                        _board[_index, i] = state;
-                        ret = true;
-                    }
-                }
-                else
-                {
-                    if(_board[i, _index] != state)
-                    {
-                        _board[i, _index] = state;
-                        ret = true;
-                    }
-                }
-            };
+            var setCell = (int i, Board.CellState state) => ret = SetCell(i, state) ? true : ret;
 
             int filledCells = 0;
             for (int i = 0; i < _size; i++)
             {
-                var cell = getCell(i);
+                var cell = GetCell(i);
                 if (cell == Board.CellState.Filled)
                 {
                     List<Line>[] pretendents = new List<Line>[_potentials.Count];
@@ -164,14 +167,14 @@ namespace NonogramSolver
             {
                 for(int i = 0; i < _size; i++)
                 {
-                    if (getCell(i) == Board.CellState.Empty)
+                    if (GetCell(i) == Board.CellState.Empty)
                         setCell(i, Board.CellState.Cross);
                 }
             }
 
             for(int i = 0; i < _size; i++)
             {
-                if (getCell(i) != Board.CellState.Empty) continue;
+                if (GetCell(i) != Board.CellState.Empty) continue;
 
                 var pretendents = _potentials.Where(lines => lines.Any(l => l.Start <= i && i <= l.End));
                 if (pretendents.Count() == 0)
@@ -236,6 +239,104 @@ namespace NonogramSolver
                             j--;
                             ret = true;
                         }
+                    }
+                }
+            }
+
+
+            int sequences = 0;
+            Board.CellState? state = null;
+            for(int i = 0; i < _size; i++)
+            {
+                var cell = GetCell(i);
+                if (cell == Board.CellState.Empty) continue;
+                if ((state is null || state == Board.CellState.Cross) && cell == Board.CellState.Filled)
+                    sequences++;
+                state = cell;
+            }
+            if(sequences == _potentials.Count)
+            {
+                BruteForce();
+            }
+
+            return ret;
+        }
+
+        internal bool BruteForce()
+        {
+            List<List<Line>> possibleSolutions = new();
+            int[] indexes = new int[_potentials.Count];
+            while (true)
+            {
+                int index = indexes.Length - 1;
+
+                Line prevLine = null;
+
+                List<Line> solution = new();
+                for (int i = 0; i < _potentials.Count; i++)
+                {
+                    var curLine = _potentials[i][indexes[i]];
+                    if (prevLine is not null && prevLine.End >= curLine.Start - 1)
+                    {
+                        solution = null;
+                        break;
+                    }
+
+                    solution.Add(curLine);
+                    prevLine = curLine;
+                }
+                if (solution is not null)
+                    possibleSolutions.Add(solution);
+
+                indexes[index]++;
+                while (indexes[index] >= _potentials[index].Count)
+                {
+                    indexes[index] = 0;
+                    index--;
+                    if (index < 0)
+                        break;
+                    indexes[index]++;
+                }
+                if (index < 0)
+                    break;
+            }
+
+            for (int i = 0; i < _size; i++)
+            {
+                var cell = GetCell(i);
+                if (cell == Board.CellState.Empty) continue;
+                for (int j = 0; j < possibleSolutions.Count; j++)
+                {
+                    if (cell == Board.CellState.Filled)
+                    {
+                        if (!possibleSolutions[j].Any(l => l.Start <= i && i <= l.End))
+                        {
+                            possibleSolutions.RemoveAt(j);
+                            j--;
+                        }
+                    }
+                    else if (cell == Board.CellState.Cross)
+                    {
+                        if (possibleSolutions[j].Any(l => l.Start <= i && i <= l.End))
+                        {
+                            possibleSolutions.RemoveAt(j);
+                            j--;
+                        }
+                    }
+                }
+            }
+
+            bool ret = false;
+
+            for (int i = 0; i < _potentials.Count; i++)
+            {
+                for (int j = 0; j < _potentials[i].Count; j++)
+                {
+                    if (!possibleSolutions.Any(lines => lines[i] == _potentials[i][j]))
+                    {
+                        _potentials[i].RemoveAt(j);
+                        j--;
+                        ret = true;
                     }
                 }
             }
